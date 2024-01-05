@@ -1,14 +1,14 @@
 const Folder = require("../models/folderModel");
 const File = require("../models/fileModel");
 
-//create folder
-const createFolder = async (req, res) => {
-    console.log("/folder/createFolder");
+//get folder by user id
+const getFolderByUserID = async (req, res) => {
+    console.log("/folder/getFolderByUserID");
 
-    const { folderName, parentFolderID } = req.body;
+    const { userID } = req.query;
     try {
-        const folder = await Folder.createFolder(folderName, parentFolderID);
-        res.status(200).send({ success: false, message: "created folder", folder });
+        const folder = await Folder.getFolderByUserID(userID);
+        res.status(200).send({ success: false, message: "got folder by user id", folder });
     } catch (err) {
         res.status(400).send({ success: false, message: err.message });
     }
@@ -27,4 +27,17 @@ const getFolderList = async (req, res) => {
     }
 }
 
-module.exports = { createFolder, getFolderList };
+//create folder
+const createFolder = async (req, res) => {
+    console.log("/folder/createFolder");
+
+    const { folderName, parentFolderID } = req.body;
+    try {
+        const folder = await Folder.createFolder(folderName, parentFolderID);
+        res.status(200).send({ success: false, message: "created folder", folder });
+    } catch (err) {
+        res.status(400).send({ success: false, message: err.message });
+    }
+}
+
+module.exports = { getFolderByUserID, getFolderList, createFolder };

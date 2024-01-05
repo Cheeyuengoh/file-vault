@@ -2,9 +2,11 @@ import './App.css';
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useAuthContext } from './hooks/useAuthContext';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
+import IndexPage from './pages/IndexPage';
+import MyVaultPage from "./pages/MyVaultPage";
 import FoldersPage from './pages/FoldersPage';
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from './pages/RegisterPage';
 
 
 function App() {
@@ -42,11 +44,14 @@ function App() {
     <main>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<IndexPage />}>
+            <Route path="my-vault" element={<MyVaultPage />}></Route>
+            <Route path="folders">
+              <Route path=":folderID" element={<FoldersPage />}></Route>
+            </Route>
+          </Route>
           <Route path="/login" element={<LoginPage />}></Route>
           <Route path="/register" element={<RegisterPage />}></Route>
-          <Route path="/folders">
-            <Route path=":folderID" element={<FoldersPage />}></Route>
-          </Route>
         </Routes>
       </BrowserRouter>
     </main>

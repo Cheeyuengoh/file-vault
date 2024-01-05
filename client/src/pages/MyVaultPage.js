@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
+import FolderComponent from "../components/FolderComponent";
+import FileComponent from "../components/FileComponent";
 
-export default function FolderComponent({ folderID }) {
+export default function MyVaultPage() {
     const { user } = useAuthContext();
     const [data, setData] = useState(null);
 
@@ -9,14 +11,14 @@ export default function FolderComponent({ folderID }) {
         let abortController = new AbortController();
         async function fetchData() {
             try {
-                const response = await fetch("http://localhost:5050/folder/getFolderList?" + new URLSearchParams({ folderID }), {
+                const response = await fetch("http://localhost:5050/folder/getFolderByUserID?" + new URLSearchParams({ userID: user._id }), {
                     headers: {
                         "Authorization": "Bearer " + user.accessToken
                     },
                     signal: abortController.signal
                 });
                 const json = await response.json();
-                setData(json.folderList);
+                setData(json.folder);
             } catch (err) {
                 console.log(err);
             }
@@ -27,13 +29,13 @@ export default function FolderComponent({ folderID }) {
         return () => {
             abortController.abort();
         }
-    }, [data, folderID, user.accessToken]);
+    }, [data, user._id, user.accessToken]);
 
     if (data) {
-        console.log(data);
         return (
             <section>
-                <h3>Folder components</h3>
+                <FolderComponent folderID={data._id}></FolderComponent>
+                <FileComponent folderID={data._id}></FileComponent>
             </section>
         );
     }

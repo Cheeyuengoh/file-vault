@@ -30,10 +30,16 @@ export default function FileComponent({ folderID }) {
     }, [data, folderID, user.accessToken]);
 
     if (data) {
-        console.log(data);
         return (
             <section>
-                File components
+                <h3>File components</h3>
+                {data.map((file) => {
+                    return (<div key={file._id}>
+                        <p>{file.filename}</p>
+                        <p>{file.mimeType}</p>
+                        <p>{file.size}</p>
+                    </div>);
+                })}
             </section>
         );
     }
