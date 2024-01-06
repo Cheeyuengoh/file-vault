@@ -12,12 +12,6 @@ const folderSchema = new Schema({
         ref: "Folder",
         required: true
     },
-    files: {
-        type: [{
-            type: Schema.Types.ObjectId,
-            ref: "File"
-        }]
-    },
     createdAt: {
         type: Date,
         required: true,

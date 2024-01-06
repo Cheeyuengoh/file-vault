@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function FolderComponent({ folderID }) {
     const { user } = useAuthContext();
     const [data, setData] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         let abortController = new AbortController();
@@ -30,10 +32,14 @@ export default function FolderComponent({ folderID }) {
     }, [data, folderID, user.accessToken]);
 
     if (data) {
-        console.log(data);
         return (
             <section>
                 <h3>Folder components</h3>
+                {data.map((folder) => {
+                    return (<div key={folder._id} onDoubleClick={() => navigate("/folders/" + folder._id)}>
+                        <p>{folder.folderName}</p>
+                    </div>);
+                })}
             </section>
         );
     }

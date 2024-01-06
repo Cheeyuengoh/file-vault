@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import FolderComponent from "../components/FolderComponent";
 import FileComponent from "../components/FileComponent";
+import CreateFolderComponent from "../components/CreateFolderComponent";
+import UploadFileComponent from "../components/UploadFileComponent";
 
 export default function MyVaultPage() {
     const { user } = useAuthContext();
@@ -34,6 +36,8 @@ export default function MyVaultPage() {
     if (data) {
         return (
             <section>
+                <CreateFolderComponent parentFolderID={data._id}></CreateFolderComponent>
+                <UploadFileComponent folderID={data._id}></UploadFileComponent>
                 <FolderComponent folderID={data._id}></FolderComponent>
                 <FileComponent folderID={data._id}></FileComponent>
             </section>

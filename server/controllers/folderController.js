@@ -8,7 +8,7 @@ const getFolderByUserID = async (req, res) => {
     const { userID } = req.query;
     try {
         const folder = await Folder.getFolderByUserID(userID);
-        res.status(200).send({ success: false, message: "got folder by user id", folder });
+        res.status(200).send({ success: true, message: "got folder by user id", folder });
     } catch (err) {
         res.status(400).send({ success: false, message: err.message });
     }
@@ -21,7 +21,7 @@ const getFolderList = async (req, res) => {
     const { folderID } = req.query;
     try {
         const folderList = await Folder.getFolderList(folderID);
-        res.status(200).send({ success: false, message: "got folder list", folderList });
+        res.status(200).send({ success: true, message: "got folder list", folderList });
     } catch (err) {
         res.status(400).send({ success: false, message: err.message });
     }
@@ -34,7 +34,7 @@ const createFolder = async (req, res) => {
     const { folderName, parentFolderID } = req.body;
     try {
         const folder = await Folder.createFolder(folderName, parentFolderID);
-        res.status(200).send({ success: false, message: "created folder", folder });
+        res.status(200).send({ success: true, message: "created folder", folder });
     } catch (err) {
         res.status(400).send({ success: false, message: err.message });
     }
