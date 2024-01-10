@@ -11,6 +11,7 @@ const isAuth = async (req, res, next) => {
     try {
         const payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         const user = await User.getUserByID(payload.user._id);
+        req.user = user;
         next();
     } catch (err) {
         return res.status(400).send({ success: false, message: err.message });

@@ -47,7 +47,7 @@ function App() {
           <Route path="/" element={<IndexPage />}>
             <Route path="my-vault" element={<MyVaultPage />}></Route>
             <Route path="folders">
-              <Route path=":folderID" element={<FoldersPage />}></Route>
+              <Route path=":id" element={<FoldersPage />}></Route>
             </Route>
           </Route>
           <Route path="/login" element={<LoginPage />}></Route>

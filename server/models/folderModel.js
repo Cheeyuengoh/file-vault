@@ -10,7 +10,13 @@ const folderSchema = new Schema({
     parentFolder: {
         type: Schema.Types.ObjectId,
         ref: "Folder",
-        required: true
+        default: null
+    },
+    path: {
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: "Folder"
+        }]
     },
     createdAt: {
         type: Date,
@@ -24,19 +30,23 @@ const folderSchema = new Schema({
     }
 }, { collection: "folders" });
 
-//get folder by user id
-folderSchema.statics.getFolderByUserID = async function (userID) {
-    if (!userID) {
+//create folder
+folderSchema.statics.createFolder = async function (folderName, parentFolderID, path, session) {
+    if (!folderName) {
         throw new Error("all fields must be filled");
     }
 
-    const folder = await this.findOne({
-        user: new ObjectId(userID)
-    });
+    if (path) path.push(parentFolderID);
 
-    if (!folder) {
-        throw new Error("folder not found");
-    }
+    const [folder] = await this.create([{
+        folderName,
+        parentFolder: parentFolderID ? new ObjectId(parentFolderID) : null,
+        path: path ? path.map((folderID) => {
+            return new ObjectId(folderID)
+        }) : []
+    }], {
+        session
+    });
 
     return folder;
 }
@@ -54,16 +64,36 @@ folderSchema.statics.getFolderList = async function (folderID) {
     return folders;
 }
 
-//create folder
-folderSchema.statics.createFolder = async function (folderName, parentFolderID) {
-    if (!folderName || !parentFolderID) {
+//get folder by id
+folderSchema.statics.getFolderByID = async function (folderID) {
+    if (!folderID) {
         throw new Error("all fields must be filled");
     }
 
-    const folder = await this.create({
-        folderName,
-        parentFolder: new ObjectId(parentFolderID)
+    const folder = await this.findOne({
+        _id: new ObjectId(folderID)
     });
+
+    if (!folder) {
+        throw new Error("folder does not exists");
+    }
+
+    return folder;
+}
+
+//get folder path
+folderSchema.statics.getFolderPath = async function (folderID) {
+    if (!folderID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const folder = await this.findOne({
+        _id: new ObjectId(folderID)
+    }).populate("path", "folderName");
+
+    if (!folder) {
+        throw new Error("folder does not exists");
+    }
 
     return folder;
 }

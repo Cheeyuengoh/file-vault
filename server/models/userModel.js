@@ -13,6 +13,11 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    rootFolder: {
+        type: Schema.Types.ObjectId,
+        ref: "Folder",
+        default: null
+    },
     createdAt: {
         type: Date,
         required: true,
@@ -26,7 +31,7 @@ const userSchema = new Schema({
 }, { collection: "users" });
 
 //register user
-userSchema.statics.registerUser = async function (email, password) {
+userSchema.statics.registerUser = async function (email, password, session) {
     if (!email || !password) {
         throw new Error("all fields must be filled");
     }
@@ -37,10 +42,10 @@ userSchema.statics.registerUser = async function (email, password) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await this.create({
+    const [user] = await this.create([{
         email,
         password: hashedPassword
-    }, {
+    }], {
         session
     });
 
@@ -48,7 +53,7 @@ userSchema.statics.registerUser = async function (email, password) {
 }
 
 //login user
-userSchema.statics.loginUser = async function (email, password, session) {
+userSchema.statics.loginUser = async function (email, password) {
     if (!email) {
         throw new Error("all fields must be filled");
     }
@@ -62,6 +67,26 @@ userSchema.statics.loginUser = async function (email, password, session) {
     if (!match) {
         throw new Error("incorrect email or password");
     }
+
+    return user;
+}
+
+//update root folder
+userSchema.statics.updateRootFolder = async function (userID, rootFolderID, session) {
+    if (!userID || !rootFolderID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const user = await this.findOneAndUpdate({
+        _id: new ObjectId(userID)
+    }, {
+        $set: {
+            rootFolder: new ObjectId(rootFolderID)
+        }
+    }, {
+        session,
+        new: true
+    });
 
     return user;
 }

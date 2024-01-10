@@ -1,18 +1,16 @@
 import { useParams } from "react-router-dom";
 import FolderComponent from "../components/FolderComponent";
 import FileComponent from "../components/FileComponent";
-import CreateFolderComponent from "../components/CreateFolderComponent";
-import UploadFileComponent from "../components/UploadFileComponent";
+import FolderPathComponent from "../components/FolderPathComponent";
 
 export default function FoldersPage() {
-    const { folderID } = useParams();
+    const { id } = useParams();
 
     return (
         <section>
-            <CreateFolderComponent parentFolderID={folderID}></CreateFolderComponent>
-            <UploadFileComponent folderID={folderID}></UploadFileComponent>
-            <FolderComponent folderID={folderID}></FolderComponent>
-            <FileComponent folderID={folderID}></FileComponent>
+            <FolderPathComponent folderID={id}></FolderPathComponent>
+            <FolderComponent folderID={id}></FolderComponent>
+            <FileComponent folderID={id}></FileComponent>
         </section>
     );
 }

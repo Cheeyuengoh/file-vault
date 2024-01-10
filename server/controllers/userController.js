@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const fs = require("fs");
 const { generateAccessToken, generateRefreshToken } = require("./generations/tokens");
 const User = require("../models/userModel");
-const RootFolder = require("../models/rootFolderModel");
+const Folder = require("../models/folderModel");
 
 //register user
 const registerUser = async (req, res) => {
@@ -13,14 +13,16 @@ const registerUser = async (req, res) => {
     try {
         session.startTransaction();
         const user = await User.registerUser(email, password, session);
-        const rootFolder = await RootFolder.createRootFolder(user._id, session);
-        fs.mkdirSync("./storage/" + user._id);
+        const folder = await Folder.createFolder("root", null, null, session);
+        const updatedUser = await User.updateRootFolder(user._id, folder._id, session);
         await session.commitTransaction();
 
-        const accessToken = generateAccessToken({ user: { _id: user._id } });
-        const refreshToken = generateRefreshToken({ user: { _id: user._id } });
+        fs.mkdirSync("./storage/" + user._id);
+
+        const accessToken = generateAccessToken({ user: { _id: updatedUser._id } });
+        const refreshToken = generateRefreshToken({ user: { _id: updatedUser._id } });
         res.cookie("refreshToken", refreshToken, { httpOnly: true });
-        res.status(200).send({ success: true, message: "registered user", user: { ...user.toObject(), accessToken } });
+        res.status(200).send({ success: true, message: "registered user", user: { ...updatedUser.toObject(), accessToken } });
     } catch (err) {
         await session.abortTransaction();
         res.status(400).send({ success: false, message: err.message });

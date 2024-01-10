@@ -1,10 +1,36 @@
-import { Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Outlet, useLocation, useParams } from "react-router-dom";
+import { useAuthContext } from "../hooks/useAuthContext";
+import CreateFolderComponent from "../components/CreateFolderComponent";
+import UploadFileComponent from "../components/UploadFileComponent";
 
 export default function IndexPage() {
-    return (
-        <section>
-            Index
-            <Outlet></Outlet>
-        </section>
-    );
+    const { user } = useAuthContext();
+    const { pathname } = useLocation();
+    const { id } = useParams();
+    const [folderID, setFolderID] = useState(null);
+
+    useEffect(() => {
+        const myVaultPathRegex = new RegExp("^/my-vault$", "i");
+        const foldersPathRegex = new RegExp("^/folders", "i");
+
+        if (myVaultPathRegex.test(pathname)) {
+            setFolderID(user.rootFolder);
+        }
+
+        if (foldersPathRegex.test(pathname)) {
+            setFolderID(id);
+        }
+    }, [id, pathname, user.rootFolder]);
+
+    if (folderID) {
+        return (
+            <section>
+                <h3>Index</h3>
+                <CreateFolderComponent parentFolderID={folderID}></CreateFolderComponent>
+                <UploadFileComponent folderID={folderID}></UploadFileComponent>
+                <Outlet></Outlet>
+            </section>
+        );
+    }
 }
