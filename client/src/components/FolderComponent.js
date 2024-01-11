@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useUpdateFolderContext } from "../hooks/useUpdateFolderContext";
 
 export default function FolderComponent({ folderID }) {
     const { user } = useAuthContext();
+    const { folder, dispatch } = useUpdateFolderContext();
     const [data, setData] = useState(null);
     const navigate = useNavigate();
 
@@ -30,6 +32,17 @@ export default function FolderComponent({ folderID }) {
             abortController.abort();
         }
     }, [data, folderID, user.accessToken]);
+
+    useEffect(() => {
+        if (folder) {
+            setData((prevData) => {
+                let nextData = [...prevData];
+                nextData.push(folder);
+                return nextData;
+            });
+            dispatch({ type: "CLEAR" });
+        }
+    }, [folder, dispatch]);
 
     if (data) {
         return (

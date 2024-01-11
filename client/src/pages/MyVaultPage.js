@@ -8,9 +8,9 @@ export default function MyVaultPage() {
 
     return (
         <section>
-            <FolderPathComponent folderID={user.rootFolder}></FolderPathComponent>
-            <FolderComponent folderID={user.rootFolder}></FolderComponent>
-            <FileComponent folderID={user.rootFolder}></FileComponent>
+            <FolderPathComponent key={"path" + user.rootFolder} folderID={user.rootFolder}></FolderPathComponent>
+            <FolderComponent key={"folder" + user.rootFolder} folderID={user.rootFolder}></FolderComponent>
+            <FileComponent key={"file" + user.rootFolder} folderID={user.rootFolder}></FileComponent>
         </section>
     );
 }

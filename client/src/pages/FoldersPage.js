@@ -8,9 +8,9 @@ export default function FoldersPage() {
 
     return (
         <section>
-            <FolderPathComponent folderID={id}></FolderPathComponent>
-            <FolderComponent folderID={id}></FolderComponent>
-            <FileComponent folderID={id}></FileComponent>
+            <FolderPathComponent key={"path" + id} folderID={id}></FolderPathComponent>
+            <FolderComponent key={"folder" + id} folderID={id}></FolderComponent>
+            <FileComponent key={"file" + id} folderID={id}></FileComponent>
         </section>
     );
 }

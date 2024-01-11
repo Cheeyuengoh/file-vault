@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { UpdateFolderContextProvider } from "../contexts/UpdateFolderContext";
 import CreateFolderComponent from "../components/CreateFolderComponent";
 import UploadFileComponent from "../components/UploadFileComponent";
+import { UpdateFileContextProvider } from "../contexts/UpdateFileContext";
 
 export default function IndexPage() {
     const { user } = useAuthContext();
@@ -17,7 +19,7 @@ export default function IndexPage() {
         }
 
         const myVaultPathRegex = new RegExp("^/my-vault$", "i");
-        const foldersPathRegex = new RegExp("^/folders", "i");
+        const foldersPathRegex = new RegExp("^/folders/", "i");
 
         if (myVaultPathRegex.test(pathname)) {
             setFolderID(user.rootFolder);
@@ -32,9 +34,13 @@ export default function IndexPage() {
         return (
             <section>
                 <h3>Index</h3>
-                <CreateFolderComponent folderID={folderID}></CreateFolderComponent>
-                <UploadFileComponent folderID={folderID}></UploadFileComponent>
-                <Outlet></Outlet>
+                <UpdateFolderContextProvider>
+                    <UpdateFileContextProvider>
+                        <CreateFolderComponent folderID={folderID}></CreateFolderComponent>
+                        <UploadFileComponent folderID={folderID}></UploadFileComponent>
+                        <Outlet></Outlet>
+                    </UpdateFileContextProvider>
+                </UpdateFolderContextProvider>
             </section>
         );
     }

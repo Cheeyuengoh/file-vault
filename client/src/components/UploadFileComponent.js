@@ -1,7 +1,9 @@
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useUpdateFileContext } from "../hooks/useUpdateFileContext";
 
 export default function UploadFileComponent({ folderID }) {
     const { user } = useAuthContext();
+    const { dispatch } = useUpdateFileContext();
 
     async function handleChange(e) {
         const data = new FormData();
@@ -20,9 +22,9 @@ export default function UploadFileComponent({ folderID }) {
                 body: data
             });
             const json = await response.json();
-            console.log(json);
-            if(response.ok){
+            if (response.ok) {
                 e.target.value = null;
+                dispatch({ type: "UPLOAD", payload: json.fileList });
             }
         } catch (err) {
             console.log(err);

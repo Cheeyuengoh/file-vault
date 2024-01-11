@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useUpdateFileContext } from "../hooks/useUpdateFileContext";
 
 export default function FileComponent({ folderID }) {
     const { user } = useAuthContext();
+    const { file, dispatch } = useUpdateFileContext();
     const [data, setData] = useState(null);
 
     useEffect(() => {
@@ -28,6 +30,16 @@ export default function FileComponent({ folderID }) {
             abortController.abort();
         }
     }, [data, folderID, user.accessToken]);
+
+    useEffect(() => {
+        if (file) {
+            setData((prevData) => {
+                let nextData = [...prevData].concat(file);
+                return nextData;
+            });
+            dispatch({ type: "CLEAR" });
+        }
+    }, [file, dispatch]);
 
     if (data) {
         return (

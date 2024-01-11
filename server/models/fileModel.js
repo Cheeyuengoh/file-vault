@@ -39,7 +39,7 @@ const fileSchema = new Schema({
 }, { collection: "files" });
 
 //upload file
-fileSchema.statics.uploadFile = async function (filename, mimeType, size, folderID) {
+fileSchema.statics.uploadFile = async function (filename, mimeType, size, folderID, userID) {
     if (!filename || !mimeType || !size || !folderID) {
         throw new Error("All fields must be filled");
     }
@@ -48,7 +48,8 @@ fileSchema.statics.uploadFile = async function (filename, mimeType, size, folder
         filename,
         mimeType,
         size,
-        folder: new ObjectId(folderID)
+        folder: new ObjectId(folderID),
+        authorizedUsers: [new ObjectId(userID)]
     });
 
     return file;

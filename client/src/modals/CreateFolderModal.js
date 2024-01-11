@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useUpdateFolderContext } from "../hooks/useUpdateFolderContext";
 import ModalWithOverlay from "./templates/ModalWithOverlay";
 
 export default function CreateFolderModal({ setShowModal, folderID }) {
     const { user } = useAuthContext();
+    const { dispatch } = useUpdateFolderContext();
     const [folderName, setFolderName] = useState("");
 
     async function handleSubmit(e) {
@@ -19,7 +21,7 @@ export default function CreateFolderModal({ setShowModal, folderID }) {
                 body: JSON.stringify({ folderName, folderID })
             });
             const json = await response.json();
-            console.log(json);
+            dispatch({ type: "CREATE", payload: json.folder });
             setShowModal(false);
         } catch (err) {
             console.log(err);
