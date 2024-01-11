@@ -4,10 +4,10 @@ const Folder = require("../models/folderModel");
 const createFolder = async (req, res) => {
     console.log("/folder/createFolder");
 
-    const { folderName, parentFolderID } = req.body;
+    const { folderName, folderID } = req.body;
     try {
-        const parentFolder = await Folder.getFolderByID(parentFolderID);
-        const folder = await Folder.createFolder(folderName, parentFolderID, parentFolder.path);
+        const parentFolder = await Folder.getFolderByID(folderID);
+        const folder = await Folder.createFolder(folderName, parentFolder._id, parentFolder.path, req.user._id);
         res.status(200).send({ success: true, message: "created folder", folder });
     } catch (err) {
         res.status(400).send({ success: false, message: err.message });

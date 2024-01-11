@@ -18,6 +18,12 @@ const folderSchema = new Schema({
             ref: "Folder"
         }]
     },
+    authorizedUsers: {
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: "User"
+        }]
+    },
     createdAt: {
         type: Date,
         required: true,
@@ -31,7 +37,7 @@ const folderSchema = new Schema({
 }, { collection: "folders" });
 
 //create folder
-folderSchema.statics.createFolder = async function (folderName, parentFolderID, path, session) {
+folderSchema.statics.createFolder = async function (folderName, parentFolderID, path, userID, session) {
     if (!folderName) {
         throw new Error("all fields must be filled");
     }
@@ -43,7 +49,8 @@ folderSchema.statics.createFolder = async function (folderName, parentFolderID, 
         parentFolder: parentFolderID ? new ObjectId(parentFolderID) : null,
         path: path ? path.map((folderID) => {
             return new ObjectId(folderID)
-        }) : []
+        }) : [],
+        authorizedUsers: [new ObjectId(userID)]
     }], {
         session
     });
@@ -96,6 +103,25 @@ folderSchema.statics.getFolderPath = async function (folderID) {
     }
 
     return folder;
+}
+
+//is authorized
+folderSchema.statics.isAuthorized = async function (folderID, userID) {
+    if (!folderID || !userID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const folder = await this.findOne({
+        _id: new ObjectId(folderID)
+    });
+
+    if (!folder) {
+        throw new Error("folder does not exists");
+    }
+
+    if (!folder.authorizedUsers.includes(userID)) {
+        throw new Error("user not authorized to access folder");
+    }
 }
 
 module.exports = mongoose.model("Folder", folderSchema, "folders");

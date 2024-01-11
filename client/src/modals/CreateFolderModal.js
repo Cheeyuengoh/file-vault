@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import ModalWithOverlay from "./templates/ModalWithOverlay";
 
-export default function CreateFolderModal({ setShowModal, parentFolderID }) {
+export default function CreateFolderModal({ setShowModal, folderID }) {
     const { user } = useAuthContext();
     const [folderName, setFolderName] = useState("");
 
@@ -16,7 +16,7 @@ export default function CreateFolderModal({ setShowModal, parentFolderID }) {
                     "Content-Type": "application/json",
                     "Authorization": "Bearer " + user.accessToken
                 },
-                body: JSON.stringify({ folderName, parentFolderID })
+                body: JSON.stringify({ folderName, folderID })
             });
             const json = await response.json();
             console.log(json);

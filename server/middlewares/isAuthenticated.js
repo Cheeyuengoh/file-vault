@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require('../models/userModel');
 
-const isAuth = async (req, res, next) => {
+const isAuthenticated = async (req, res, next) => {
     const { authorization } = req.headers;
     if (!authorization) {
         return res.status(400).send({ success: false, message: "no access token provided" });
@@ -18,4 +18,4 @@ const isAuth = async (req, res, next) => {
     }
 }
 
-module.exports = { isAuth }
+module.exports = { isAuthenticated }

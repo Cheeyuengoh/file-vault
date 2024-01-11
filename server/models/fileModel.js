@@ -20,6 +20,12 @@ const fileSchema = new Schema({
         ref: "Folder",
         required: true
     },
+    authorizedUsers: {
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: "User"
+        }]
+    },
     createdAt: {
         type: Date,
         required: true,
@@ -59,6 +65,25 @@ fileSchema.statics.getFileList = async function (folderID) {
     });
 
     return files;
+}
+
+//is authorized
+fileSchema.statics.isAuthorized = async function (fileID, userID) {
+    if (!fileID || !userID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const file = await this.findOne({
+        _id: new ObjectId(fileID)
+    });
+
+    if (!file) {
+        throw new Error("folder does not exists");
+    }
+
+    if (!file.authorizedUsers.includes(userID)) {
+        throw new Error("user not authorized to access folder");
+    }
 }
 
 module.exports = mongoose.model("File", fileSchema, "files");
