@@ -32,12 +32,13 @@ export default function IndexPage() {
 
     if (folderID) {
         return (
-            <section>
-                <h3>Index</h3>
+            <section className="flex">
                 <UpdateFolderContextProvider>
                     <UpdateFileContextProvider>
-                        <CreateFolderComponent folderID={folderID}></CreateFolderComponent>
-                        <UploadFileComponent folderID={folderID}></UploadFileComponent>
+                        <div>
+                            <CreateFolderComponent folderID={folderID}></CreateFolderComponent>
+                            <UploadFileComponent folderID={folderID}></UploadFileComponent>
+                        </div>
                         <Outlet></Outlet>
                     </UpdateFileContextProvider>
                 </UpdateFolderContextProvider>

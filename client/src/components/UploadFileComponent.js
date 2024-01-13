@@ -35,8 +35,8 @@ export default function UploadFileComponent({ folderID }) {
         <section>
             <form>
                 <label>
-                    <p>Upload File</p>
-                    <input type="file" multiple onChange={handleChange}></input>
+                    <p className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300">Upload File</p>
+                    <input className="hidden" type="file" multiple onChange={handleChange}></input>
                 </label>
             </form>
         </section>

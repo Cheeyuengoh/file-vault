@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useUpdateFileContext } from "../hooks/useUpdateFileContext";
+import OptionComponent from "./OptionComponent";
 
 export default function FileComponent({ folderID }) {
     const { user } = useAuthContext();
@@ -41,18 +42,22 @@ export default function FileComponent({ folderID }) {
         }
     }, [file, dispatch]);
 
+    function sizeBToMB(bytes) {
+        return (bytes / (1024 * 1024)).toFixed(2) + "MB";
+    }
+
     if (data) {
         return (
-            <section>
-                <h3>File components</h3>
+            <tbody>
                 {data.map((file) => {
-                    return (<div key={file._id}>
-                        <p>{file.filename}</p>
-                        <p>{file.mimeType}</p>
-                        <p>{file.size}</p>
-                    </div>);
+                    return (<tr key={file._id}>
+                        <td className="truncate">{file.filename}</td>
+                        <td>{new Date(file.lastModified).toLocaleDateString("en-us", { day: "numeric", month: "short", year: "numeric" })}</td>
+                        <td>{sizeBToMB(file.size)}</td>
+                        <td><OptionComponent></OptionComponent></td>
+                    </tr>);
                 })}
-            </section>
+            </tbody>
         );
     }
 }

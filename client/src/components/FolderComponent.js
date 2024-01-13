@@ -46,14 +46,25 @@ export default function FolderComponent({ folderID }) {
 
     if (data) {
         return (
-            <section>
-                <h3>Folder components</h3>
+            <tbody>
                 {data.map((folder) => {
-                    return (<div key={folder._id} onDoubleClick={() => navigate("/folders/" + folder._id)}>
-                        <p>{folder.folderName}</p>
-                    </div>);
+                    return (<tr key={folder._id} onDoubleClick={() => navigate("/folders/" + folder._id)}>
+                        <td className="truncate">{folder.folderName}</td>
+                        <td>{new Date(folder.lastModified).toLocaleDateString("en-us", { day: "numeric", month: "short", year: "numeric" })}</td>
+                        <td>-</td>
+                        <td>
+                            <svg className="w-[36px] h-[36px] p-2 rounded-full cursor-pointer hover:bg-gray-300" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0 0h48v48H0z" fill="none" />
+                                <g id="Shopicon">
+                                    <circle cx="24" cy="24" r="5" />
+                                    <circle cx="24" cy="11" r="5" />
+                                    <circle cx="24" cy="37" r="5" />
+                                </g>
+                            </svg>
+                        </td>
+                    </tr>);
                 })}
-            </section>
+            </tbody>
         );
     }
 }

@@ -18,7 +18,7 @@ export default function FolderPathComponent({ folderID }) {
                     signal: abortController.signal
                 });
                 const json = await response.json();
-                setData(json.path);
+                setData(json.folder);
             } catch (err) {
                 console.log(err);
             }
@@ -33,10 +33,9 @@ export default function FolderPathComponent({ folderID }) {
 
     if (data) {
         return (
-            <section>
-                <h3>Path</h3>
-                {data.map((folder) => {
-                    return (<div key={folder._id} onDoubleClick={() => {
+            <section className="flex">
+                {data.path.map((folder) => {
+                    return (<div className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" key={folder._id} onDoubleClick={() => {
                         if (folder.folderName === "root") {
                             navigate("/my-vault");
                         } else {
@@ -46,6 +45,7 @@ export default function FolderPathComponent({ folderID }) {
                         <p>{folder.folderName === "root" ? "my-vault" : folder.folderName}</p>
                     </div>);
                 })}
+                <div className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300"><p>{data.folderName === "root" ? "my-vault" : data.folderName}</p></div>
             </section>
         );
     }

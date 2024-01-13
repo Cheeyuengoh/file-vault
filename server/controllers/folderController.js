@@ -34,7 +34,7 @@ const getFolderPath = async (req, res) => {
     const { folderID } = req.query;
     try {
         const folder = await Folder.getFolderPath(folderID);
-        res.status(200).send({ success: true, message: "got folder path", path: folder.path });
+        res.status(200).send({ success: true, message: "got folder path", folder: folder });
     } catch (err) {
         res.status(400).send({ success: false, message: err.message });
     }
