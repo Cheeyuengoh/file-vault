@@ -7,8 +7,8 @@ export default function UploadFileComponent({ folderID }) {
 
     async function handleChange(e) {
         const data = new FormData();
-        data.append("userID", user._id);
         data.append("folderID", folderID);
+        data.append("action", "upload");
         for (const file of e.target.files) {
             data.append("files", file);
         }

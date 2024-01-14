@@ -36,16 +36,16 @@ export default function FolderPathComponent({ folderID }) {
             <section className="flex">
                 {data.path.map((folder) => {
                     return (<div className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" key={folder._id} onDoubleClick={() => {
-                        if (folder.folderName === "root") {
+                        if (folder.isRootFolder) {
                             navigate("/my-vault");
                         } else {
                             navigate("/folders/" + folder._id);
                         }
                     }}>
-                        <p>{folder.folderName === "root" ? "my-vault" : folder.folderName}</p>
+                        <p>{folder.isRootFolder ? "my-vault" : folder.folderName}</p>
                     </div>);
                 })}
-                <div className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300"><p>{data.folderName === "root" ? "my-vault" : data.folderName}</p></div>
+                <div className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300"><p>{data.isRootFolder ? "my-vault" : data.folderName}</p></div>
             </section>
         );
     }

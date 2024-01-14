@@ -3,26 +3,53 @@ const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 
 const folderSchema = new Schema({
+    isRootFolder: {
+        type: Boolean,
+        required: true
+    },
     folderName: {
         type: String,
-        required: true
+        required: function () {
+            return !this.isRootFolder;
+        }
     },
     parentFolder: {
         type: Schema.Types.ObjectId,
         ref: "Folder",
-        default: null
+        required: function () {
+            return !this.isRootFolder
+        }
     },
     path: {
         type: [{
             type: Schema.Types.ObjectId,
             ref: "Folder"
-        }]
+        }],
+        required: true
     },
-    authorizedUsers: {
+    isAuthorized: {
         type: [{
-            type: Schema.Types.ObjectId,
-            ref: "User"
-        }]
+            user: {
+                type: Schema.Types.ObjectId,
+                ref: "User",
+                required: true
+            },
+            role: {
+                type: String,
+                required: true,
+                enum: ["owner", "editor", "viewer"]
+            },
+            accessLevel: {
+                type: [{
+                    type: String,
+                    required: true,
+                    enum: ["share", "upload", "create", "read", "update", "delete"]
+                }],
+                required: true
+            },
+            _id: false
+        }],
+        required: true
     },
     createdAt: {
         type: Date,
@@ -37,23 +64,47 @@ const folderSchema = new Schema({
 }, { collection: "folders" });
 
 //create folder
-folderSchema.statics.createFolder = async function (folderName, parentFolderID, path, userID, session) {
-    if (!folderName) {
+folderSchema.statics.createRootFolder = async function (userID, session) {
+    if (!userID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const [folder] = await this.create([{
+        isRootFolder: true,
+        path: [],
+        isAuthorized: [{
+            user: new ObjectId(userID),
+            role: "owner",
+            accessLevel: ["share", "upload", "create", "read", "update", "delete"]
+        }]
+    }], {
+        session
+    });
+
+    return folder;
+}
+
+folderSchema.statics.createFolder = async function (folderName, parentFolderID, path, userID) {
+
+    if (!folderName || !parentFolderID || !path || !userID) {
         throw new Error("all fields must be filled");
     }
 
     if (path) path.push(parentFolderID);
 
     const [folder] = await this.create([{
+        isRootFolder: false,
         folderName,
-        parentFolder: parentFolderID ? new ObjectId(parentFolderID) : null,
-        path: path ? path.map((folderID) => {
+        parentFolder: new ObjectId(parentFolderID),
+        path: path.map((folderID) => {
             return new ObjectId(folderID)
-        }) : [],
-        authorizedUsers: [new ObjectId(userID)]
-    }], {
-        session
-    });
+        }),
+        isAuthorized: [{
+            user: new ObjectId(userID),
+            role: "owner",
+            accessLevel: ["share", "upload", "create", "read", "update", "delete"]
+        }]
+    }]);
 
     return folder;
 }
@@ -96,7 +147,7 @@ folderSchema.statics.getFolderPath = async function (folderID) {
 
     const folder = await this.findOne({
         _id: new ObjectId(folderID)
-    }).populate("path", "folderName");
+    }).populate("path");
 
     if (!folder) {
         throw new Error("folder does not exists");
@@ -106,8 +157,8 @@ folderSchema.statics.getFolderPath = async function (folderID) {
 }
 
 //is authorized
-folderSchema.statics.isAuthorized = async function (folderID, userID) {
-    if (!folderID || !userID) {
+folderSchema.statics.isAuthorized = async function (folderID, userID, action) {
+    if (!folderID || !userID || !action) {
         throw new Error("all fields must be filled");
     }
 
@@ -119,9 +170,46 @@ folderSchema.statics.isAuthorized = async function (folderID, userID) {
         throw new Error("folder does not exists");
     }
 
-    if (!folder.authorizedUsers.includes(userID)) {
-        throw new Error("user not authorized to access folder");
+    const [filtered] = folder.isAuthorized.filter((obj) => {
+        return obj.user.equals(userID);
+    });
+
+    if (!filtered) {
+        throw new Error("user does not have access to folder");
     }
+    if (!filtered.accessLevel.includes(action)) {
+        throw new Error(`user not authorized to ${action} folder`);
+    }
+}
+
+folderSchema.statics.updateFolderName = async function (folderID, folderName) {
+    if (!folderID || !folderName) {
+        throw new Error("all fields must be filled");
+    }
+
+    const folder = await this.findOneAndUpdate({
+        _id: new ObjectId(folderID)
+    }, {
+        $set: {
+            folderName
+        }
+    }, {
+        new: true
+    });
+
+    return folder;
+}
+
+folderSchema.statics.deleteFolder = async function (folderID) {
+    if (folderID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const folder = await this.deleteOne({
+        _id: new ObjectId(folderID)
+    });
+
+    return folder;
 }
 
 module.exports = mongoose.model("Folder", folderSchema, "folders");

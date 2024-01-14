@@ -18,7 +18,7 @@ export default function CreateFolderModal({ setShowModal, folderID }) {
                     "Content-Type": "application/json",
                     "Authorization": "Bearer " + user.accessToken
                 },
-                body: JSON.stringify({ folderName, folderID })
+                body: JSON.stringify({ folderName, folderID, action: "create" })
             });
             const json = await response.json();
             dispatch({ type: "CREATE", payload: json.folder });

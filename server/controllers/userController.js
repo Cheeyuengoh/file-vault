@@ -13,7 +13,7 @@ const registerUser = async (req, res) => {
     try {
         session.startTransaction();
         const user = await User.registerUser(email, password, session);
-        const folder = await Folder.createFolder("root", null, null, user._id, session);
+        const folder = await Folder.createRootFolder(user._id, session);
         const updatedUser = await User.updateRootFolder(user._id, folder._id, session);
         await session.commitTransaction();
 

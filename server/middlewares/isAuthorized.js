@@ -4,13 +4,14 @@ const formidable = require("formidable");
 
 const isAuthorizedFolder = async (req, res, next) => {
     try {
-        await Folder.isAuthorized(req.folderID, req.user._id);
+        await Folder.isAuthorized(req.isAuthorized.folderID, req.user._id, req.isAuthorized.action);
         next();
     } catch (err) {
         return res.status(400).send({ success: false, message: err.message });
     }
 }
 
+//not ready
 const isAuthorizedFile = async (req, res, next) => {
     let fileID = "";
     if (req.method === "GET") {

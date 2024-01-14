@@ -11,7 +11,13 @@ const parseDataFolder = async (req, res, next) => {
 
         try {
             const [field, file] = await form.parse(req);
-            req.folderID = field.folderID[0];
+            req.isAuthorized = {
+                folderID: field.folderID[0],
+                action: field.action[0]
+            }
+            req.fields = {
+                folderID: field.folderID[0]
+            };
             req.files = file.files;
             next();
         } catch (err) {
@@ -20,12 +26,18 @@ const parseDataFolder = async (req, res, next) => {
     }
 
     if (req.method === "POST" && req.is("application/json")) {
-        req.folderID = req.body.folderID;
+        req.isAuthorized = {
+            folderID: req.body.folderID,
+            action: req.body.action
+        }
         next();
     }
 
     if (req.method === "GET") {
-        req.folderID = req.query.folderID;
+        req.isAuthorized = {
+            folderID: req.query.folderID,
+            action: "read"
+        }
         next();
     }
 }

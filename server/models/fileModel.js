@@ -20,11 +20,29 @@ const fileSchema = new Schema({
         ref: "Folder",
         required: true
     },
-    authorizedUsers: {
+    isAuthorized: {
         type: [{
-            type: Schema.Types.ObjectId,
-            ref: "User"
-        }]
+            user: {
+                type: Schema.Types.ObjectId,
+                ref: "User",
+                required: true
+            },
+            role: {
+                type: String,
+                required: true,
+                enum: ["owner", "editor", "viewer"]
+            },
+            accessLevel: {
+                type: [{
+                    type: String,
+                    required: true,
+                    enum: ["share", "read", "update", "delete"]
+                }],
+                required: true
+            },
+            _id: false
+        }],
+        required: true
     },
     createdAt: {
         type: Date,
@@ -49,7 +67,11 @@ fileSchema.statics.uploadFile = async function (filename, mimeType, size, folder
         mimeType,
         size,
         folder: new ObjectId(folderID),
-        authorizedUsers: [new ObjectId(userID)]
+        isAuthorized: [{
+            user: new ObjectId(userID),
+            role: "owner",
+            accessLevel: ["share", "read", "update", "delete"]
+        }]
     });
 
     return file;
@@ -69,8 +91,8 @@ fileSchema.statics.getFileList = async function (folderID) {
 }
 
 //is authorized
-fileSchema.statics.isAuthorized = async function (fileID, userID) {
-    if (!fileID || !userID) {
+fileSchema.statics.isAuthorized = async function (fileID, userID, action) {
+    if (!fileID || !userID || !action) {
         throw new Error("all fields must be filled");
     }
 
@@ -79,12 +101,50 @@ fileSchema.statics.isAuthorized = async function (fileID, userID) {
     });
 
     if (!file) {
-        throw new Error("folder does not exists");
+        throw new Error("file does not exists");
     }
 
-    if (!file.authorizedUsers.includes(userID)) {
-        throw new Error("user not authorized to access folder");
+    const filtered = file.isAuthorized.filter((obj) => {
+        return obj.user === userID;
+    });
+
+    if (!filtered) {
+        throw new Error("user does not have access to file");
     }
+
+    if (!filtered.accessLevel.includes(action)) {
+        throw new Error(`user not authorized to ${action} file`);
+    }
+}
+
+fileSchema.statics.updateFilename = async function (fileID, filename) {
+    if (!fileID || !filename) {
+        throw new Error("all fields must be filled");
+    }
+
+    const file = await this.findOneAndUpdate({
+        _id: new ObjectId(fileID)
+    }, {
+        $set: {
+            filename
+        }
+    }, {
+        new: true
+    });
+
+    return file;
+}
+
+fileSchema.statics.deleteFile = async function (fileID) {
+    if (fileID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const file = await this.deleteOne({
+        _id: new ObjectId(fileID)
+    });
+
+    return file;
 }
 
 module.exports = mongoose.model("File", fileSchema, "files");
