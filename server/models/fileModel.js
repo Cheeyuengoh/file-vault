@@ -20,7 +20,7 @@ const fileSchema = new Schema({
         ref: "Folder",
         required: true
     },
-    isAuthorized: {
+    authorizedUsers: {
         type: [{
             user: {
                 type: Schema.Types.ObjectId,
@@ -36,7 +36,7 @@ const fileSchema = new Schema({
                 type: [{
                     type: String,
                     required: true,
-                    enum: ["share", "read", "update", "delete"]
+                    enum: ["read", "update", "delete"]
                 }],
                 required: true
             },
@@ -67,10 +67,10 @@ fileSchema.statics.uploadFile = async function (filename, mimeType, size, folder
         mimeType,
         size,
         folder: new ObjectId(folderID),
-        isAuthorized: [{
+        authorizedUsers: [{
             user: new ObjectId(userID),
             role: "owner",
-            accessLevel: ["share", "read", "update", "delete"]
+            accessLevel: getAccessLevel("owner")
         }]
     });
 
@@ -104,8 +104,8 @@ fileSchema.statics.isAuthorized = async function (fileID, userID, action) {
         throw new Error("file does not exists");
     }
 
-    const filtered = file.isAuthorized.filter((obj) => {
-        return obj.user === userID;
+    const [filtered] = file.authorizedUsers.filter((obj) => {
+        return obj.user.equals(userID);
     });
 
     if (!filtered) {
@@ -117,34 +117,43 @@ fileSchema.statics.isAuthorized = async function (fileID, userID, action) {
     }
 }
 
-fileSchema.statics.updateFilename = async function (fileID, filename) {
-    if (!fileID || !filename) {
+fileSchema.statics.addAuthorizedUser = async function (fileID, userID, role, session) {
+    if (!fileID || !userID || !role) {
         throw new Error("all fields must be filled");
     }
 
-    const file = await this.findOneAndUpdate({
+    const file = await this.findOne({
         _id: new ObjectId(fileID)
-    }, {
-        $set: {
-            filename
-        }
-    }, {
-        new: true
     });
 
-    return file;
-}
-
-fileSchema.statics.deleteFile = async function (fileID) {
-    if (fileID) {
-        throw new Error("all fields must be filled");
+    if (!file) {
+        throw new Error("file does not exists");
     }
 
-    const file = await this.deleteOne({
-        _id: new ObjectId(fileID)
+    file.authorizedUsers.push({
+        user: new ObjectId(userID),
+        role,
+        accessLevel: getAccessLevel(role)
+    });
+    file.lastModified = Date.now();
+    const updatedFile = await file.save({
+        session
     });
 
-    return file;
+    return updatedFile;
 }
 
 module.exports = mongoose.model("File", fileSchema, "files");
+
+function getAccessLevel(role) {
+    switch (role) {
+        case "owner":
+            return ["read", "update", "delete"];
+        case "editor":
+            return ["read", "update", "delete"];
+        case "viewer":
+            return ["read"];
+        default:
+            return [];
+    }
+}

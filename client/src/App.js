@@ -7,6 +7,7 @@ import MyVaultPage from "./pages/MyVaultPage";
 import FoldersPage from './pages/FoldersPage';
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from './pages/RegisterPage';
+import ShareVaultPage from './pages/ShareVaultPage';
 
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
         });
         const json = await response.json();
         if (response.ok) {
-          dispatch({ type: "LOGIN", payload: json.user });
+          dispatch({ type: "LOGIN", payload: json.data });
         }
       } catch (err) {
         console.log(err);
@@ -46,6 +47,7 @@ function App() {
         <Routes>
           <Route path="/" element={<IndexPage />}>
             <Route path="my-vault" element={<MyVaultPage />}></Route>
+            <Route path="share-vault" element={<ShareVaultPage />}></Route>
             <Route path="folders">
               <Route path=":id" element={<FoldersPage />}></Route>
             </Route>

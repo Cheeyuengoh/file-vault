@@ -1,14 +1,14 @@
 import { useAuthContext } from "../hooks/useAuthContext";
-import { useUpdateFileContext } from "../hooks/useUpdateFileContext";
+import { useUpdateContext } from "../hooks/useUpdateContext";
 
 export default function UploadFileComponent({ folderID }) {
     const { user } = useAuthContext();
-    const { dispatch } = useUpdateFileContext();
+    const { dispatch } = useUpdateContext();
 
     async function handleChange(e) {
         const data = new FormData();
         data.append("folderID", folderID);
-        data.append("action", "upload");
+        data.append("action", "create");
         for (const file of e.target.files) {
             data.append("files", file);
         }
@@ -24,7 +24,7 @@ export default function UploadFileComponent({ folderID }) {
             const json = await response.json();
             if (response.ok) {
                 e.target.value = null;
-                dispatch({ type: "UPLOAD", payload: json.fileList });
+                dispatch({ type: "FILE_CREATE", payload: json.data });
             }
         } catch (err) {
             console.log(err);

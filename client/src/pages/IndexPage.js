@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
-import { UpdateFolderContextProvider } from "../contexts/UpdateFolderContext";
+import { UpdateContextProvider } from "../contexts/UpdateContext";
 import CreateFolderComponent from "../components/CreateFolderComponent";
 import UploadFileComponent from "../components/UploadFileComponent";
-import { UpdateFileContextProvider } from "../contexts/UpdateFileContext";
 
 export default function IndexPage() {
     const { user } = useAuthContext();
@@ -30,19 +29,16 @@ export default function IndexPage() {
         }
     }, [id, pathname, user, navigate]);
 
-    if (folderID) {
-        return (
-            <section className="flex">
-                <UpdateFolderContextProvider>
-                    <UpdateFileContextProvider>
-                        <div>
-                            <CreateFolderComponent folderID={folderID}></CreateFolderComponent>
-                            <UploadFileComponent folderID={folderID}></UploadFileComponent>
-                        </div>
-                        <Outlet></Outlet>
-                    </UpdateFileContextProvider>
-                </UpdateFolderContextProvider>
-            </section>
-        );
-    }
+    return (
+        <section className="flex">
+            <UpdateContextProvider>
+                <div>
+                    <CreateFolderComponent folderID={folderID}></CreateFolderComponent>
+                    <UploadFileComponent folderID={folderID}></UploadFileComponent>
+                    <button onClick={() => navigate("/share-vault")}>Share Vault</button>
+                </div>
+                <Outlet key={pathname}></Outlet>
+            </UpdateContextProvider>
+        </section>
+    );
 }

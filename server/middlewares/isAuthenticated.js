@@ -4,7 +4,7 @@ const User = require('../models/userModel');
 const isAuthenticated = async (req, res, next) => {
     const { authorization } = req.headers;
     if (!authorization) {
-        return res.status(400).send({ success: false, message: "no access token provided" });
+        return res.status(400).send({ message: err.message });
     }
 
     const token = authorization.split(" ")[1];
@@ -14,7 +14,7 @@ const isAuthenticated = async (req, res, next) => {
         req.user = user;
         next();
     } catch (err) {
-        return res.status(400).send({ success: false, message: err.message });
+        return res.status(400).send({ message: err.message });
     }
 }
 

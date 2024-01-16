@@ -7,27 +7,27 @@ const refreshTokens = async (req, res) => {
 
     const token = req.cookies.refreshToken;
     if (!token) {
-        return res.status(400).send({ success: false, message: "no refresh token provided" });
+        return res.status(400).send({ message: "no refresh token provided" });
     }
 
     let payload = null;
     try {
         payload = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
     } catch (err) {
-        return res.status(400).send({ success: false, message: err.message });
+        return res.status(400).send({ message: err.message });
     }
 
     let user = null;
     try {
         user = await User.getUserByID(payload.user._id);
     } catch (err) {
-        return res.status(400).send({ success: false, message: err.message });
+        return res.status(400).send({ message: err.message });
     }
 
     const accessToken = generateAccessToken({ user: { _id: user._id } });
     const refreshToken = generateRefreshToken({ user: { _id: user._id } });
     res.cookie("refreshToken", refreshToken, { httpOnly: true });
-    res.status(200).send({ success: true, user: { ...user.toObject(), accessToken } });
+    res.status(200).send({ message: "refreshed tokens", data: { ...user.toObject(), accessToken } });
 }
 
 module.exports = { refreshTokens };

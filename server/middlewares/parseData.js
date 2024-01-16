@@ -21,7 +21,7 @@ const parseDataFolder = async (req, res, next) => {
             req.files = file.files;
             next();
         } catch (err) {
-            return res.status(400).send({ success: false, message: err.message });
+            return res.status(400).send({ message: err.message });
         }
     }
 
@@ -42,4 +42,22 @@ const parseDataFolder = async (req, res, next) => {
     }
 }
 
-module.exports = { parseDataFolder };
+const parseDataFile = async function (req, res, next) {
+    if (req.method === "POST" && req.is("application/json")) {
+        req.isAuthorized = {
+            fileID: req.body.fileID,
+            action: req.body.action
+        }
+        next();
+    }
+
+    if (req.method === "GET") {
+        req.isAuthorized = {
+            fileID: req.query.fileID,
+            action: "read"
+        }
+        next();
+    }
+}
+
+module.exports = { parseDataFolder, parseDataFile };

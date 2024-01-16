@@ -1,32 +1,24 @@
 const Folder = require("../models/folderModel");
 const File = require("../models/fileModel");
-const formidable = require("formidable");
 
 const isAuthorizedFolder = async (req, res, next) => {
+    const { user, isAuthorized } = req;
     try {
-        await Folder.isAuthorized(req.isAuthorized.folderID, req.user._id, req.isAuthorized.action);
+        await Folder.isAuthorized(isAuthorized.folderID, user._id, isAuthorized.action);
         next();
     } catch (err) {
-        return res.status(400).send({ success: false, message: err.message });
+        return res.status(400).send({ message: err.message });
     }
 }
 
 //not ready
 const isAuthorizedFile = async (req, res, next) => {
-    let fileID = "";
-    if (req.method === "GET") {
-        fileID = req.query.fileID
-    }
-
-    if (req.method === "POST") {
-        fileID = req.body.fileID
-    }
-
+    const { user, isAuthorized } = req;
     try {
-        await File.isAuthorized(fileID, req.user._id);
+        await File.isAuthorized(isAuthorized.fileID, user._id, isAuthorized.action);
         next();
     } catch (err) {
-        return res.status(400).send({ success: false, message: err.message });
+        return res.status(400).send({ message: err.message });
     }
 }
 

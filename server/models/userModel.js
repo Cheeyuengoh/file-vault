@@ -18,6 +18,22 @@ const userSchema = new Schema({
         ref: "Folder",
         default: null
     },
+    share: {
+        folders: {
+            type: [{
+                type: Schema.Types.ObjectId,
+                ref: "Folder",
+                required: true
+            }],
+        },
+        files: {
+            type: [{
+                type: Schema.Types.ObjectId,
+                ref: "File",
+                required: true
+            }]
+        }
+    },
     createdAt: {
         type: Date,
         required: true,
@@ -106,6 +122,97 @@ userSchema.statics.getUserByID = async function (userID) {
     }
 
     return user;
+}
+
+//get user by email
+userSchema.statics.getUserByEmail = async function (email) {
+    if (!email) {
+        throw new Error("all fields must be filled");
+    }
+
+    const user = await this.findOne({
+        email
+    });
+
+    if (!user) {
+        throw new Error("user not found");
+    }
+
+    return user;
+}
+
+userSchema.statics.addShareFile = async function (userID, fileID, session) {
+    if (!userID || !fileID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const user = await this.findOneAndUpdate({
+        _id: new ObjectId(userID)
+    }, {
+        $push: {
+            "share.files": new ObjectId(fileID)
+        }
+    }, {
+        session,
+        new: true
+    });
+
+    return user;
+}
+
+userSchema.statics.addShareFolder = async function (userID, folderID, session) {
+    if (!userID || !folderID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const user = await this.findOneAndUpdate({
+        _id: new ObjectId(userID)
+    }, {
+        $push: {
+            "share.folders": new ObjectId(folderID)
+        }
+    }, {
+        session,
+        new: true
+    });
+
+    return user;
+}
+
+userSchema.statics.getShareFileList = async function (userID) {
+    if (!userID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const user = await this.findOne({
+        _id: new ObjectId(userID)
+    }).populate({
+        path: "share",
+        populate: {
+            path: "files",
+            model: "File"
+        }
+    });
+
+    return user.share.files;
+}
+
+userSchema.statics.getShareFolderList = async function (userID) {
+    if (!userID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const user = await this.findOne({
+        _id: new ObjectId(userID)
+    }).populate({
+        path: "share",
+        populate: {
+            path: "folders",
+            model: "Folder"
+        }
+    });
+
+    return user.share.folders;
 }
 
 module.exports = mongoose.model("User", userSchema, "users");

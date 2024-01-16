@@ -22,7 +22,7 @@ export default function LoginPage() {
             });
             const json = await response.json();
             if (response.ok) {
-                dispatch({ type: "LOGIN", payload: json.user });
+                dispatch({ type: "LOGIN", payload: json.data });
                 navigate("/my-vault");
             }
         } catch (err) {
