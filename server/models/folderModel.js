@@ -213,6 +213,24 @@ folderSchema.statics.addAuthorizedUser = async function (folderID, userID, role,
     return updatedFolder;
 }
 
+folderSchema.statics.updateFolderName = async function (folderID, rename) {
+    if (!folderID || !rename) {
+        throw new Error("all fields must be filled");
+    }
+
+    const folder = await this.findOneAndUpdate({
+        _id: new ObjectId(folderID)
+    }, {
+        $set: {
+            folderName: rename
+        }
+    }, {
+        new: true
+    });
+
+    return folder;
+}
+
 module.exports = mongoose.model("Folder", folderSchema, "folders");
 
 function getAccessLevel(role) {

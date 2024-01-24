@@ -5,7 +5,7 @@ export default function OptionComponent({ data }) {
     const [showDropdown, setShowDropdown] = useState(false);
 
     return (
-        <div className="relative">
+        <div className="relative" onDoubleClick={(e) => e.stopPropagation()}>
             <svg className="w-[36px] h-[36px] p-2 rounded-full cursor-pointer hover:bg-gray-300" onClick={() => { setShowDropdown(true); }} viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 0h48v48H0z" fill="none" />
                 <g id="Shopicon">

@@ -36,6 +36,19 @@ const getFileList = async (req, res) => {
     }
 }
 
+const updateFileName = async (req, res) => {
+    console.log("/file/updateFileName");
+
+    const { fileID, rename } = req.body;
+    console.log(fileID, rename);
+    try {
+        const file = await File.updateFileName(fileID, rename);
+        res.status(200).send({ message: "updated file name", data: file });
+    } catch (err) {
+        res.status(400).send({ message: err.message });
+    }
+}
+
 //share file
 const shareFile = async (req, res) => {
     console.log("/file/shareFile");
@@ -59,4 +72,4 @@ const shareFile = async (req, res) => {
     await session.endSession();
 }
 
-module.exports = { uploadFile, getFileList, shareFile };
+module.exports = { uploadFile, getFileList, updateFileName, shareFile };

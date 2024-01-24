@@ -11,7 +11,7 @@ export default function FileComponent({ fileList }) {
                 {fileList.map((file) => {
                     return (
                         <tr key={file._id}>
-                            <td className="truncate">{file.filename}</td>
+                            <td className="truncate">{file.fileName}</td>
                             <td>{new Date(file.lastModified).toLocaleDateString("en-us", { day: "numeric", month: "short", year: "numeric" })}</td>
                             <td>{sizeBToMB(file.size)}</td>
                             <td><OptionComponent data={{ type: "file", fileID: file._id }}></OptionComponent></td>

@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 
 const fileSchema = new Schema({
-    filename: {
+    fileName: {
         type: String,
         required: true
     },
@@ -57,13 +57,13 @@ const fileSchema = new Schema({
 }, { collection: "files" });
 
 //upload file
-fileSchema.statics.uploadFile = async function (filename, mimeType, size, folderID, userID) {
-    if (!filename || !mimeType || !size || !folderID) {
+fileSchema.statics.uploadFile = async function (fileName, mimeType, size, folderID, userID) {
+    if (!fileName || !mimeType || !size || !folderID) {
         throw new Error("All fields must be filled");
     }
 
     const file = await this.create({
-        filename,
+        fileName,
         mimeType,
         size,
         folder: new ObjectId(folderID),
@@ -141,6 +141,24 @@ fileSchema.statics.addAuthorizedUser = async function (fileID, userID, role, ses
     });
 
     return updatedFile;
+}
+
+fileSchema.statics.updateFileName = async function (fileID, rename) {
+    if (!fileID || !rename) {
+        throw new Error("all fields must be filled");
+    }
+
+    const file = await this.findOneAndUpdate({
+        _id: new ObjectId(fileID)
+    }, {
+        $set: {
+            fileName: rename
+        }
+    }, {
+        new: true
+    });
+
+    return file;
 }
 
 module.exports = mongoose.model("File", fileSchema, "files");

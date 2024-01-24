@@ -54,27 +54,55 @@ export default function FoldersPage() {
     useEffect(() => {
         if (update) {
             if (update.type === "folder") {
-                setFolderList((prevData) => {
-                    let nextData = [...prevData];
-                    nextData.push(update.data);
-                    return nextData;
-                });
-                dispatch({ type: "CLEAR" });
+                if (update.action === "create") {
+                    setFolderList((prevData) => {
+                        let nextData = [...prevData];
+                        nextData.push(update.data);
+                        return nextData;
+                    });
+                    dispatch({ type: "CLEAR" });
+                }
+
+                if (update.action === "update") {
+                    setFolderList((prevData) => {
+                        let nextData = [...prevData];
+                        const index = nextData.findIndex((folder) => {
+                            return folder._id === update.data._id;
+                        });
+                        nextData[index] = update.data;
+                        return nextData;
+                    });
+                    dispatch({ type: "CLEAR" });
+                }
             }
 
             if (update.type === "file") {
-                setFileList((prevData) => {
-                    let nextData = [...prevData].concat(update.data);
-                    return nextData;
-                });
-                dispatch({ type: "CLEAR" });
+                if (update.action === "create") {
+                    setFileList((prevData) => {
+                        let nextData = [...prevData].concat(update.data);
+                        return nextData;
+                    });
+                    dispatch({ type: "CLEAR" });
+                }
+
+                if (update.action === "update") {
+                    setFileList((prevData) => {
+                        let nextData = [...prevData];
+                        const index = nextData.findIndex((file) => {
+                            return file._id === update.data._id;
+                        });
+                        nextData[index] = update.data;
+                        return nextData;
+                    });
+                    dispatch({ type: "CLEAR" });
+                }
             }
         }
     }, [update, dispatch]);
 
     return (
         <section>
-            <PathComponent folderPath={folderPath}></PathComponent>
+            <PathComponent folderPath={folderPath} vault={sessionStorage.vault}></PathComponent>
             <table className="table-fixed w-full">
                 <HeaderComponent></HeaderComponent>
                 <FolderComponent folderList={folderList}></FolderComponent>

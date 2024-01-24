@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import ModalWithOverlay from "./templates/ModalWithOverlay";
 
-export function ShareModal({ setShowModal, data }) {
+export function ShareModal({ setShowModal, setShowDropdown, data }) {
     const { user } = useAuthContext();
     const [role, setRole] = useState("editor");
     const [emails, setEmails] = useState([]);
@@ -43,6 +43,7 @@ export function ShareModal({ setShowModal, data }) {
             const json = await response.json();
             console.log(json);
             setShowModal(false);
+            setShowDropdown(false);
         } catch (err) {
             console.log(err);
         }

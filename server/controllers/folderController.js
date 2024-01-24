@@ -55,6 +55,18 @@ const getFolderPath = async (req, res) => {
     }
 }
 
+const updateFolderName = async (req, res) => {
+    console.log("/folder/updateFolderName");
+
+    const { folderID, rename } = req.body;
+    try {
+        const folder = await Folder.updateFolderName(folderID, rename);
+        res.status(200).send({ message: "updated folder name", data: folder });
+    } catch (err) {
+        res.status(400).send({ message: err.message });
+    }
+}
+
 //share folder
 const shareFolder = async (req, res) => {
     console.log("/folder/shareFolder");
@@ -79,7 +91,7 @@ const shareFolder = async (req, res) => {
     await session.endSession();
 }
 
-module.exports = { createFolder, getFolderList, getFolderPath, shareFolder };
+module.exports = { createFolder, getFolderList, getFolderPath, updateFolderName, shareFolder };
 
 async function getMyPath(folderID, path) {
     const parentFolder = await Folder.getParentFolder(folderID);
@@ -90,11 +102,11 @@ async function getMyPath(folderID, path) {
 }
 
 async function getSharePath(folderID, userShareFolders, path) {
+    if (userShareFolders.includes(folderID)) return path;
+
     const parentFolder = await Folder.getParentFolder(folderID);
-
-    if (userShareFolders.includes(parentFolder)) return;
-
     path.unshift(parentFolder);
+
     return getSharePath(parentFolder._id, userShareFolders, path);
 }
 
