@@ -11,6 +11,10 @@ const fileSchema = new Schema({
         type: String,
         required: true
     },
+    extension: {
+        type: String,
+        required: true
+    },
     size: {
         type: Number,
         required: true
@@ -57,14 +61,15 @@ const fileSchema = new Schema({
 }, { collection: "files" });
 
 //upload file
-fileSchema.statics.uploadFile = async function (fileName, mimeType, size, folderID, userID) {
-    if (!fileName || !mimeType || !size || !folderID) {
+fileSchema.statics.uploadFile = async function (fileName, mimeType, extension, size, folderID, userID) {
+    if (!fileName || !mimeType || !extension || !size || !folderID) {
         throw new Error("All fields must be filled");
     }
 
     const file = await this.create({
         fileName,
         mimeType,
+        extension,
         size,
         folder: new ObjectId(folderID),
         authorizedUsers: [{
@@ -88,6 +93,19 @@ fileSchema.statics.getFileList = async function (folderID) {
     });
 
     return files;
+}
+
+//get file by id
+fileSchema.statics.getFileByID = async function (fileID) {
+    if (!fileID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const file = await this.findOne({
+        _id: new ObjectId(fileID)
+    });
+
+    return file;
 }
 
 //is authorized
@@ -156,6 +174,20 @@ fileSchema.statics.updateFileName = async function (fileID, rename) {
         }
     }, {
         new: true
+    });
+
+    return file;
+}
+
+fileSchema.statics.deleteFile = async function (fileID, session) {
+    if (!fileID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const file = await this.deleteOne({
+        _id: new ObjectId(fileID)
+    }, {
+        session
     });
 
     return file;

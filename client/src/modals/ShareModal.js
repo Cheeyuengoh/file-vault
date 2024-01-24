@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import ModalWithOverlay from "./templates/ModalWithOverlay";
 
-export function ShareModal({ setShowModal, setShowDropdown, data }) {
+export default function ShareModal({ setShowModal, setShowDropdown, data }) {
     const { user } = useAuthContext();
     const [role, setRole] = useState("editor");
     const [emails, setEmails] = useState([]);

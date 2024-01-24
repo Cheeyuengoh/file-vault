@@ -141,6 +141,7 @@ userSchema.statics.getUserByEmail = async function (email) {
     return user;
 }
 
+//add share file
 userSchema.statics.addShareFile = async function (userID, fileID, session) {
     if (!userID || !fileID) {
         throw new Error("all fields must be filled");
@@ -160,6 +161,7 @@ userSchema.statics.addShareFile = async function (userID, fileID, session) {
     return user;
 }
 
+//add share folder
 userSchema.statics.addShareFolder = async function (userID, folderID, session) {
     if (!userID || !folderID) {
         throw new Error("all fields must be filled");
@@ -179,6 +181,27 @@ userSchema.statics.addShareFolder = async function (userID, folderID, session) {
     return user;
 }
 
+//remove share file
+userSchema.statics.removeShareFile = async function (userID, fileID, session) {
+    if (!userID || !fileID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const user = await this.findOneAndUpdate({
+        _id: new ObjectId(userID)
+    }, {
+        $pull: {
+            "share.files": fileID
+        }
+    }, {
+        session,
+        new: true
+    });
+
+    return user;
+}
+
+//get share file list
 userSchema.statics.getShareFileList = async function (userID) {
     if (!userID) {
         throw new Error("all fields must be filled");
@@ -197,6 +220,7 @@ userSchema.statics.getShareFileList = async function (userID) {
     return user.share.files;
 }
 
+//fet share folder list
 userSchema.statics.getShareFolderList = async function (userID) {
     if (!userID) {
         throw new Error("all fields must be filled");

@@ -58,6 +58,14 @@ const parseDataFile = async function (req, res, next) {
         }
         next();
     }
+
+    if (req.method === "DELETE") {
+        req.isAuthorized = {
+            fileID: req.query.fileID,
+            action: "delete"
+        }
+        next();
+    }
 }
 
 module.exports = { parseDataFolder, parseDataFile };

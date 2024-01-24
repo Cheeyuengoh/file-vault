@@ -11,7 +11,7 @@ const uploadFile = async (req, res) => {
     const fileList = [];
     for (let i = 0; i < files.length; i++) {
         try {
-            const file = await File.uploadFile(files[i].originalFilename, files[i].mimetype, files[i].size, fields.folderID, user._id);
+            const file = await File.uploadFile(files[i].originalFilename, files[i].mimetype, files[i].originalFilename.split(".")[1], files[i].size, fields.folderID, user._id);
             fs.renameSync(files[i].filepath, "./storage/" + user._id + "/" + file._id + "." + files[i].originalFilename.split(".")[1]);
             fileList.push(file);
         } catch (err) {
@@ -36,6 +36,7 @@ const getFileList = async (req, res) => {
     }
 }
 
+//update file name
 const updateFileName = async (req, res) => {
     console.log("/file/updateFileName");
 
@@ -47,6 +48,39 @@ const updateFileName = async (req, res) => {
     } catch (err) {
         res.status(400).send({ message: err.message });
     }
+}
+
+//remove file
+const deleteFile = async (req, res) => {
+    console.log("/file/deleteFile");
+
+    const { fileID } = req.query;
+    const session = await mongoose.startSession();
+    try {
+        session.startTransaction();
+        const file = await File.getFileByID(fileID);
+        for (const user of file.authorizedUsers) {
+            if (user.role !== "owner") {
+                const updatedUser = await User.removeShareFile(user.user, fileID, session);
+            }
+        }
+
+        const index = file.authorizedUsers.findIndex((user) => {
+            return user.role === "owner";
+        });
+        const owner = file.authorizedUsers[index].user;
+        const path = "./storage/" + owner + "/" + file._id + "." + file.extension;
+        fs.unlinkSync(path);
+        const deletedFile = await File.deleteFile(fileID, session);
+
+        await session.commitTransaction();
+
+        res.status(200).send({ message: "deleted file" });
+    } catch (err) {
+        await session.abortTransaction();
+        res.status(400).send({ message: err.message });
+    }
+    await session.endSession();
 }
 
 //share file
@@ -72,4 +106,4 @@ const shareFile = async (req, res) => {
     await session.endSession();
 }
 
-module.exports = { uploadFile, getFileList, updateFileName, shareFile };
+module.exports = { uploadFile, getFileList, updateFileName, deleteFile, shareFile };

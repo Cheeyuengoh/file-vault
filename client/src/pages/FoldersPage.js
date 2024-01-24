@@ -96,6 +96,18 @@ export default function FoldersPage() {
                     });
                     dispatch({ type: "CLEAR" });
                 }
+
+                if (update.action === "delete") {
+                    setFileList((prevData) => {
+                        let nextData = [...prevData];
+                        const index = nextData.findIndex((file) => {
+                            return file._id === update.data;
+                        });
+                        nextData.splice(index, 1);
+                        return nextData;
+                    });
+                    dispatch({ type: "CLEAR" });
+                }
             }
         }
     }, [update, dispatch]);
