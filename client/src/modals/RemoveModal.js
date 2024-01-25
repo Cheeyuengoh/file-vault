@@ -4,13 +4,26 @@ import ModalWithOverlay from "./templates/ModalWithOverlay";
 
 export default function RemoveModal({ setShowModal, setShowDropdown, data }) {
     const { user } = useAuthContext();
-    const {dispatch} = useUpdateContext();
+    const { dispatch } = useUpdateContext();
 
     async function handleSubmit(e) {
         e.preventDefault();
 
         if (data.type === "folder") {
-
+            try {
+                const response = await fetch("http://localhost:5050/folder/deleteFolder?" + new URLSearchParams({ folderID: data.folderID }), {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": "Bearer " + user.accessToken
+                    }
+                });
+                const json = await response.json();
+                dispatch({ type: "FOLDER_DELETE", payload: data.folderID });
+                setShowModal(false);
+                setShowDropdown(false);
+            } catch (err) {
+                console.log(err);
+            }
         }
 
         if (data.type === "file") {

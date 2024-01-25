@@ -231,6 +231,21 @@ folderSchema.statics.updateFolderName = async function (folderID, rename) {
     return folder;
 }
 
+//delete folder
+folderSchema.statics.deleteFolder = async function (folderID, session) {
+    if (!folderID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const folder = await this.deleteOne({
+        _id: new ObjectId(folderID)
+    }, {
+        session
+    });
+
+    return folder;
+}
+
 module.exports = mongoose.model("Folder", folderSchema, "folders");
 
 function getAccessLevel(role) {

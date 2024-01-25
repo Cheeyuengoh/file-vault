@@ -201,6 +201,26 @@ userSchema.statics.removeShareFile = async function (userID, fileID, session) {
     return user;
 }
 
+//remove folder
+userSchema.statics.removeShareFolder = async function (userID, folderID, session) {
+    if (!userID || !folderID) {
+        throw new Error("all fields must be filled");
+    }
+
+    const user = await this.findOneAndUpdate({
+        _id: new ObjectId(userID)
+    }, {
+        $pull: {
+            "share.folders": folderID
+        }
+    }, {
+        session,
+        new: true
+    });
+
+    return user;
+}
+
 //get share file list
 userSchema.statics.getShareFileList = async function (userID) {
     if (!userID) {

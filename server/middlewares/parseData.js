@@ -40,6 +40,14 @@ const parseDataFolder = async (req, res, next) => {
         }
         next();
     }
+
+    if (req.method === "DELETE") {
+        req.isAuthorized = {
+            folderID: req.query.folderID,
+            action: "delete"
+        }
+        next();
+    }
 }
 
 const parseDataFile = async function (req, res, next) {

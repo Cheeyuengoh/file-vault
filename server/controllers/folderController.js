@@ -1,3 +1,4 @@
+const fs = require("fs");
 const mongoose = require("mongoose");
 const Folder = require("../models/folderModel");
 const File = require("../models/fileModel");
@@ -55,6 +56,7 @@ const getFolderPath = async (req, res) => {
     }
 }
 
+//update folder name
 const updateFolderName = async (req, res) => {
     console.log("/folder/updateFolderName");
 
@@ -64,6 +66,58 @@ const updateFolderName = async (req, res) => {
         res.status(200).send({ message: "updated folder name", data: folder });
     } catch (err) {
         res.status(400).send({ message: err.message });
+    }
+}
+
+//delete folder
+const deleteFolder = async (req, res) => {
+    console.log("/folder/deleteFolder");
+
+    const { folderID } = req.query;
+    const session = await mongoose.startSession();
+    try {
+        session.startTransaction();
+        await deleteNestedFoldersAndFiles(folderID, session);
+
+        await session.commitTransaction();
+        res.status(200).send({ message: "deleted folder" });
+    } catch (err) {
+        await session.abortTransaction();
+        res.status(400).send({ message: err.message });
+    }
+    await session.endSession();
+}
+
+async function deleteNestedFoldersAndFiles(folderID, session) {
+    const fileList = await File.getFileList(folderID);
+    for (const file of fileList) {
+        for (const user of file.authorizedUsers) {
+            if (user.role !== "owner") {
+                const updatedUser = await User.removeShareFile(user.user, file._id, session);
+            }
+        }
+        const index = file.authorizedUsers.findIndex((user) => {
+            return user.role === "owner";
+        });
+        const owner = file.authorizedUsers[index].user;
+        const path = "./storage/" + owner + "/" + file._id + "." + file.extension;
+        fs.unlinkSync(path);
+        const deletedFile = await File.deleteFile(file._id, session);
+    }
+
+    const folder = await Folder.getFolderByID(folderID);
+    for (const user of folder.authorizedUsers) {
+        if (user.role !== "owner") {
+            const updatedUser = await User.removeShareFolder(user.user, folderID, session);
+        }
+    }
+    const deletedFolder = await Folder.deleteFolder(folderID, session);
+
+    const folderList = await Folder.getFolderList(folderID);
+    if (!folderList.length) return;
+
+    for (const folder of folderList) {
+        await deleteNestedFoldersAndFiles(folder._id, session);
     }
 }
 
@@ -91,7 +145,7 @@ const shareFolder = async (req, res) => {
     await session.endSession();
 }
 
-module.exports = { createFolder, getFolderList, getFolderPath, updateFolderName, shareFolder };
+module.exports = { createFolder, getFolderList, getFolderPath, updateFolderName, deleteFolder, shareFolder };
 
 async function getMyPath(folderID, path) {
     const parentFolder = await Folder.getParentFolder(folderID);
