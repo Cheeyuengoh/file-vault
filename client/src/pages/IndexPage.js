@@ -35,7 +35,8 @@ export default function IndexPage() {
                 <div>
                     <CreateFolderComponent folderID={folderID}></CreateFolderComponent>
                     <UploadFileComponent folderID={folderID}></UploadFileComponent>
-                    <button onClick={() => navigate("/share-vault")}>Share Vault</button>
+                    <button className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" onClick={() => navigate("/my-vault")}>My Vault</button>
+                    <button className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" onClick={() => navigate("/share-vault")}>Share Vault</button>
                 </div>
                 <Outlet key={pathname}></Outlet>
             </UpdateContextProvider>
