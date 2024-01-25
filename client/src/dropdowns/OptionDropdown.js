@@ -1,17 +1,35 @@
 import { useState } from "react";
+import { useAuthContext } from "../hooks/useAuthContext";
+import jsFileDownload from "js-file-download";
 import RenameModal from "../modals/RenameModal";
 import ShareModal from "../modals/ShareModal";
 import RemoveModal from "../modals/RemoveModal";
 
 export default function OptionDropdown({ setShowDropdown, data }) {
+    const { user } = useAuthContext();
     const [showRenameModal, setShowRenameModal] = useState(false);
     const [showShareModal, setShowShareModal] = useState(false);
     const [showRemoveModal, setShowRemoveModal] = useState(false);
 
+    async function handleClick() {
+        try {
+            const response = await fetch("http://localhost:5050/file/downloadFile?" + new URLSearchParams({ fileID: data.fileID }), {
+                headers: {
+                    "Authorization": "Bearer " + user.accessToken
+                },
+                responseType: "blob"
+            });
+            const blob = await response.blob();
+            jsFileDownload(blob, data.fileName);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     return (
         <div>
             <div className="absolute top-8 right-28 p-3 z-20 rounded-md shadow-lg bg-white flex flex-col ">
-                <p className="py-1 px-4">Download</p>
+                {data.type === "file" && <button className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" onClick={handleClick}>Download</button>}
                 <button className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" onClick={() => setShowRenameModal(true)}>Rename</button>
                 <button className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" onClick={() => setShowShareModal(true)}>Share</button>
                 <button className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" onClick={() => setShowRemoveModal(true)}>Remove</button>

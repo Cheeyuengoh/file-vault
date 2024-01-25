@@ -4,7 +4,7 @@ const User = require('../models/userModel');
 const isAuthenticated = async (req, res, next) => {
     const { authorization } = req.headers;
     if (!authorization) {
-        return res.status(400).send({ message: err.message });
+        return res.status(400).send({ message: "no token provided" });
     }
 
     const token = authorization.split(" ")[1];

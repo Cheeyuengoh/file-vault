@@ -89,7 +89,7 @@ export default function FileComponent({ options }) {
                         <td className="truncate">{file.fileName}</td>
                         <td>{new Date(file.lastModified).toLocaleDateString("en-us", { day: "numeric", month: "short", year: "numeric" })}</td>
                         <td>{sizeBToMB(file.size)}</td>
-                        <td><OptionComponent data={{ type: "file", fileID: file._id }}></OptionComponent></td>
+                        <td><OptionComponent data={{ type: "file", fileID: file._id, fileName: file.fileName }}></OptionComponent></td>
                     </tr>
                 );
             })}

@@ -80,7 +80,7 @@ const deleteFolder = async (req, res) => {
         await deleteNestedFoldersAndFiles(folderID, session);
 
         await session.commitTransaction();
-        res.status(200).send({ message: "deleted folder" });
+        res.status(200).send({ message: "deleted folder", data: folderID });
     } catch (err) {
         await session.abortTransaction();
         res.status(400).send({ message: err.message });

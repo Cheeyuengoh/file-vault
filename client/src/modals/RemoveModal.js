@@ -18,7 +18,7 @@ export default function RemoveModal({ setShowModal, setShowDropdown, data }) {
                     }
                 });
                 const json = await response.json();
-                dispatch({ type: "FOLDER_DELETE", payload: data.folderID });
+                dispatch({ type: "FOLDER_DELETE", payload: json.data });
                 setShowModal(false);
                 setShowDropdown(false);
             } catch (err) {
@@ -35,7 +35,7 @@ export default function RemoveModal({ setShowModal, setShowDropdown, data }) {
                     }
                 });
                 const json = await response.json();
-                dispatch({ type: "FILE_DELETE", payload: data.fileID });
+                dispatch({ type: "FILE_DELETE", payload: json.data });
                 setShowModal(false);
                 setShowDropdown(false);
             } catch (err) {

@@ -1,7 +1,8 @@
 const fs = require("fs");
+const mongoose = require("mongoose");
+const http = require("http");
 const File = require("../models/fileModel");
 const User = require("../models/userModel");
-const { default: mongoose } = require("mongoose");
 
 //upload file
 const uploadFile = async (req, res) => {
@@ -75,12 +76,29 @@ const deleteFile = async (req, res) => {
 
         await session.commitTransaction();
 
-        res.status(200).send({ message: "deleted file" });
+        res.status(200).send({ message: "deleted file", data: fileID });
     } catch (err) {
         await session.abortTransaction();
         res.status(400).send({ message: err.message });
     }
     await session.endSession();
+}
+
+const downloadFile = async (req, res) => {
+    console.log("/download");
+
+    const { fileID } = req.query;
+    try {
+        const file = await File.getFileByID(fileID);
+        const index = file.authorizedUsers.findIndex((user) => {
+            return user.role === "owner";
+        });
+        const owner = file.authorizedUsers[index].user;
+        const url = "http://localhost:5050/" + owner + "/" + file._id + "." + file.extension;
+        http.get(url, (fileStream) => fileStream.pipe(res));
+    } catch (err) {
+        res.status(400).send({ message: err.message });
+    }
 }
 
 //share file
@@ -106,4 +124,4 @@ const shareFile = async (req, res) => {
     await session.endSession();
 }
 
-module.exports = { uploadFile, getFileList, updateFileName, deleteFile, shareFile };
+module.exports = { uploadFile, getFileList, updateFileName, deleteFile, downloadFile, shareFile };
