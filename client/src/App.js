@@ -8,6 +8,7 @@ import FoldersPage from './pages/FoldersPage';
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from './pages/RegisterPage';
 import ShareVaultPage from './pages/ShareVaultPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
           </Route>
           <Route path="/login" element={<LoginPage />}></Route>
           <Route path="/register" element={<RegisterPage />}></Route>
+          <Route path="*" element={<NotFoundPage />}></Route>
         </Routes>
       </BrowserRouter>
     </main>
