@@ -30,13 +30,13 @@ export default function IndexPage() {
     }, [id, pathname, user, navigate]);
 
     return (
-        <section className="flex">
+        <section className="h-full p-8 flex">
             <UpdateContextProvider>
-                <div className="flex flex-col items-start">
+                <div className="flex flex-col items-start gap-2 p-2 border-r-2">
                     <CreateFolderComponent folderID={folderID}></CreateFolderComponent>
                     <UploadFileComponent folderID={folderID}></UploadFileComponent>
-                    <button className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" onClick={() => navigate("/my-vault")}>My Vault</button>
-                    <button className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" onClick={() => navigate("/share-vault")}>Share Vault</button>
+                    <button className="indexButton" onClick={() => navigate("/my-vault")}>My Vault</button>
+                    <button className="indexButton" onClick={() => navigate("/share-vault")}>Share Vault</button>
                 </div>
                 <Outlet key={pathname}></Outlet>
             </UpdateContextProvider>

@@ -23,7 +23,7 @@ export default function FoldersPage() {
     }, [id, sessionStorage.vault, user._id, user.accessToken]);
 
     return (
-        <section className="w-full">
+        <section className="p-2">
             <PathComponent options={options}></PathComponent>
             <table className="table-fixed w-full">
                 <HeaderComponent></HeaderComponent>

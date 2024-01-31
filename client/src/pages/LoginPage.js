@@ -31,17 +31,17 @@ export default function LoginPage() {
     }
 
     return (
-        <section>
-            <form onSubmit={handleSubmit}>
+        <section className="form-section">
+            <form className="loginForm" onSubmit={handleSubmit}>
                 <label>
                     <p>Email:</p>
-                    <input type="text" onChange={(e) => setEmail(e.target.value)}></input>
+                    <input className="loginInput" type="text" onChange={(e) => setEmail(e.target.value)}></input>
                 </label>
                 <label>
                     <p>Password:</p>
-                    <input type="password" onChange={(e) => setPassword(e.target.value)}></input>
+                    <input className="loginInput" type="password" onChange={(e) => setPassword(e.target.value)}></input>
                 </label>
-                <button type="submit">Login</button>
+                <button className="loginButton" type="submit">Login</button>
             </form>
         </section>
     );

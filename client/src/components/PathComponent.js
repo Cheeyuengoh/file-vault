@@ -32,17 +32,11 @@ export default function PathComponent({ options }) {
     }, [data, options]);
 
     return (
-        <section className="flex">
-            <div className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" onDoubleClick={() => navigate("/" + options.vault)}>
-                <p>{options.vault}</p>
-            </div>
+        <section className="flex gap-2">
+            <button className="pathButton" onClick={() => navigate("/" + options.vault)}>{options.vault}</button>
             {data && data.map((folder) => {
                 return (
-                    <div className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" key={folder._id} onDoubleClick={() => {
-                        navigate("/folders/" + folder._id);
-                    }}>
-                        <p>{folder.folderName}</p>
-                    </div>
+                    <button className="pathButton" key={folder._id} onClick={() => navigate("/folders/" + folder._id)}>{folder.folderName}</button>
                 );
             })}
         </section>

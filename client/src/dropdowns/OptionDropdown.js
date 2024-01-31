@@ -28,11 +28,11 @@ export default function OptionDropdown({ setShowDropdown, data }) {
 
     return (
         <div>
-            <div className="absolute top-8 right-28 p-3 z-20 rounded-md shadow-lg bg-white flex flex-col ">
-                {data.type === "file" && <button className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" onClick={handleClick}>Download</button>}
-                <button className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" onClick={() => setShowRenameModal(true)}>Rename</button>
-                <button className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" onClick={() => setShowShareModal(true)}>Share</button>
-                <button className="py-1 px-4 rounded-full cursor-pointer whitespace-nowrap hover:bg-gray-300" onClick={() => setShowRemoveModal(true)}>Remove</button>
+            <div className="absolute top-8 right-14 p-3 z-20 rounded-md shadow-lg bg-white flex flex-col ">
+                {data.type === "file" && <button className="optionButton" onClick={handleClick}>Download</button>}
+                <button className="optionButton" onClick={() => setShowRenameModal(true)}>Rename</button>
+                <button className="optionButton" onClick={() => setShowShareModal(true)}>Share</button>
+                <button className="optionButton" onClick={() => setShowRemoveModal(true)}>Remove</button>
                 {showRenameModal && <RenameModal setShowModal={setShowRenameModal} setShowDropdown={setShowDropdown} data={data}></RenameModal>}
                 {showShareModal && <ShareModal setShowModal={setShowShareModal} setShowDropdown={setShowDropdown} data={data}></ShareModal>}
                 {showRemoveModal && <RemoveModal setShowModal={setShowRemoveModal} setShowDropdown={setShowDropdown} data={data}></RemoveModal>}

@@ -82,7 +82,7 @@ export default function FolderComponent({ options }) {
         <tbody>
             {data && data.map((folder) => {
                 return (
-                    <tr key={folder._id} onDoubleClick={() => navigate("/folders/" + folder._id)}>
+                    <tr key={folder._id} className="folderComponent" onDoubleClick={() => navigate("/folders/" + folder._id)}>
                         <td className="truncate">{folder.folderName}</td>
                         <td>{new Date(folder.lastModified).toLocaleDateString("en-us", { day: "numeric", month: "short", year: "numeric" })}</td>
                         <td>-</td>

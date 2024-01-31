@@ -23,7 +23,7 @@ export default function ShareVaultPage() {
     }, [sessionStorage, setSessionStorage]);
 
     return (
-        <section className="w-full">
+        <section className="p-2">
             <table className="table-fixed w-full">
                 <HeaderComponent></HeaderComponent>
                 <FolderComponent options={options}></FolderComponent>

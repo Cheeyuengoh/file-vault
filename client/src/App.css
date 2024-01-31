@@ -1,0 +1,45 @@
+@tailwind components;
+
+@layer components {
+    .form-section {
+        @apply h-full flex justify-center items-center;
+    }
+
+    .loginForm,
+    .registerForm,
+    .folderForm,
+    .renameForm,
+    .removeForm,
+    .shareForm {
+        @apply flex flex-col gap-2 p-2 rounded-md bg-gray-200;
+    }
+
+    .loginInput,
+    .registerInput,
+    .folderInput,
+    .renameInput,
+    .shareInput {
+        @apply px-2 outline-none;
+    }
+
+    .loginButton,
+    .registerButton,
+    .folderButton,
+    .renameButton,
+    .removeButton,
+    .shareButton {
+        @apply ease-in-out duration-200 cursor-pointer hover:bg-teal-200;
+    }
+
+    .indexButton,
+    .pathButton,
+    .optionButton,
+    .clearButton {
+        @apply py-1 px-4 rounded-full ease-in-out duration-200 cursor-pointer whitespace-nowrap hover:bg-teal-200
+    }
+
+    .folderComponent,
+    .fileComponent {
+        @apply ease-in-out duration-200 hover:bg-indigo-300;
+    }
+}

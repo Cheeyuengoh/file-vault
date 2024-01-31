@@ -46,9 +46,9 @@ export default function RemoveModal({ setShowModal, setShowDropdown, data }) {
 
     return (
         <ModalWithOverlay setShowModal={setShowModal}>
-            <form onSubmit={handleSubmit}>
+            <form className="removeForm" onSubmit={handleSubmit}>
                 <p>Confirm remove this {data.type}?</p>
-                <button type="submit">Remove</button>
+                <button className="removeButton" type="submit">Remove</button>
             </form>
         </ModalWithOverlay>
     );

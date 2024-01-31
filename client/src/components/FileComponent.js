@@ -85,7 +85,7 @@ export default function FileComponent({ options }) {
         <tbody>
             {data && data.map((file) => {
                 return (
-                    <tr key={file._id}>
+                    <tr key={file._id} className="fileComponent">
                         <td className="truncate">{file.fileName}</td>
                         <td>{new Date(file.lastModified).toLocaleDateString("en-us", { day: "numeric", month: "short", year: "numeric" })}</td>
                         <td>{sizeBToMB(file.size)}</td>

@@ -30,12 +30,12 @@ export default function CreateFolderModal({ setShowModal, folderID }) {
 
     return (
         <ModalWithOverlay setShowModal={setShowModal}>
-            <form onSubmit={handleSubmit}>
+            <form className="folderForm" onSubmit={handleSubmit}>
                 <label>
                     <p>Folder Name</p>
-                    <input type="text" onChange={(e) => setFolderName(e.target.value)}></input>
+                    <input className="folderInput" type="text" onChange={(e) => setFolderName(e.target.value)}></input>
                 </label>
-                <button type="submit">Create</button>
+                <button className="folderButton" type="submit">Create</button>
             </form>
         </ModalWithOverlay>
     );

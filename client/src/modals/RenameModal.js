@@ -50,12 +50,12 @@ export default function RenameModal({ setShowModal, setShowDropdown, data }) {
     }
     return (
         <ModalWithOverlay setShowModal={setShowModal}>
-            <form onSubmit={handleSubmit}>
+            <form className="renameForm" onSubmit={handleSubmit}>
                 <label>
                     <p>Rename {data.type}</p>
-                    <input type="text" onChange={(e) => setRename(e.target.value)}></input>
+                    <input className="renameInput" type="text" onChange={(e) => setRename(e.target.value)}></input>
                 </label>
-                <button type="submit">Save</button>
+                <button className="renameButton" type="submit">Save</button>
             </form>
         </ModalWithOverlay>
     );

@@ -81,24 +81,28 @@ export default function ShareModal({ setShowModal, setShowDropdown, data }) {
 
     return (
         <ModalWithOverlay setShowModal={setShowModal}>
-            <form onKeyDown={handleKeyDownForm} onSubmit={handleSubmit}>
+            <form className="shareForm" onKeyDown={handleKeyDownForm} onSubmit={handleSubmit}>
                 <label>
                     <p>Email</p>
-                    <input type="text" onKeyDown={handleKeyDownInput}></input>
+                    <input className="shareInput" type="text" onKeyDown={handleKeyDownInput}></input>
                 </label>
-                <select value={role} onChange={(e) => setRole(e.target.value)}>
+                <select className="shareInput" value={role} onChange={(e) => setRole(e.target.value)}>
                     <option value="editor">Editor</option>
                     <option value="viewer">Viewer</option>
                 </select>
                 <div>
                     {emails.map((email) => {
-                        return (<div key={email}>
+                        return (<div key={email} className="flex justify-between">
                             <p>{email}</p>
-                            <button type="button" onClick={() => handleClick(email)}>X</button>
+                            <button className="p-1 rounded-full cursor-pointer hover:bg-rose-200" type="button" onClick={() => handleClick(email)}>
+                                <svg width="16px" height="16px" viewBox="0 0 24 24" id="cross" xmlns="http://www.w3.org/2000/svg">
+                                    <path id="primary" d="M13.41,12l6.3-6.29a1,1,0,1,0-1.42-1.42L12,10.59,5.71,4.29A1,1,0,0,0,4.29,5.71L10.59,12l-6.3,6.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0L12,13.41l6.29,6.3a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42Z"></path>
+                                </svg>
+                            </button>
                         </div>);
                     })}
                 </div>
-                <button type="submit">Share</button>
+                <button className="shareButton" type="submit">Share</button>
             </form>
         </ModalWithOverlay>
     );

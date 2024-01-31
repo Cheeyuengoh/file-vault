@@ -43,7 +43,7 @@ function App() {
 
   if (isLoading) return (<div>LOADING...</div>);
   return (
-    <main>
+    <main className="w-screen h-screen bg-indigo-400">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<IndexPage />}>

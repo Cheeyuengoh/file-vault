@@ -31,17 +31,17 @@ export default function RegisterPage() {
     }
 
     return (
-        <section>
-            <form onSubmit={handleSubmit}>
+        <section className="form-section">
+            <form className="registerForm" onSubmit={handleSubmit}>
                 <label>
                     <p>Email:</p>
-                    <input type="text" onChange={(e) => setEmail(e.target.value)}></input>
+                    <input className="registerInput" type="text" onChange={(e) => setEmail(e.target.value)}></input>
                 </label>
                 <label>
                     <p>Password:</p>
-                    <input type="password" onChange={(e) => setPassword(e.target.value)}></input>
+                    <input className="registerInput" type="password" onChange={(e) => setPassword(e.target.value)}></input>
                 </label>
-                <button type="submit">Register</button>
+                <button className="registerButton" type="submit">Register</button>
             </form>
         </section>
     );
